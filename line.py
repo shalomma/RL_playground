@@ -25,12 +25,13 @@ class LineEnv(Env):
 
 
 if __name__ == '__main__':
-    env = LineEnv(n=10)
-    learner = QLearning(env, lr=.1, gamma=1, eps=0)
+    env = LineEnv(n=8)
+    learner = QLearning(env, lr=None, gamma=1, eps=0)
     eps = 1e-2
-    n_episodes = 0
+    n_episodes = 1
     state_ = env.state
     while learner.q_table[0][0] <= 1 - eps:
+        learner.lr = 1 / n_episodes
         state_, _, done_ = learner.predict(state_)
         if done_:
             env.reset()

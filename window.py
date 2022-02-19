@@ -7,23 +7,19 @@ from q_learning import QLearning
 
 
 class WindowEnv(Env):
-    def __init__(self, length, window_size, episode_length, init_offset=0, init_random_range=0):
-        assert window_size + abs(init_offset) + init_random_range < length
-        assert window_size > 0 and init_random_range >= 0, episode_length > 0
+    def __init__(self, length, window: tuple, start: tuple, episode_length):
         self.action_space = Discrete(3)
         self.state_space = Discrete(length)
         self.length = length
         self.episode_length = episode_length
-        self.init_offset = init_offset
-        self.init_random_range = init_random_range
-        self.i_window_start = length // 2 - window_size // 2
-        self.i_window_end = self.i_window_start + window_size
+        self.window = window
+        self.start = start
+
         self.counter = 0
         self.state = self.init_state()
 
     def init_state(self):
-        center = self.length // 2 + self.init_offset
-        return random.randint(center - self.init_random_range // 2, center + self.init_random_range // 2)
+        return random.randint(self.start[0], self.start[1])
 
     def step(self, action: int):
         reward = self.get_reward()
@@ -32,7 +28,7 @@ class WindowEnv(Env):
         return self.state, reward, done, {}
 
     def get_reward(self):
-        return 0 if self.i_window_start <= self.state <= self.i_window_end else -1
+        return 0 if self.window[0] <= self.state <= self.window[1] else -1
 
     def is_done(self):
         self.counter += 1
@@ -47,7 +43,7 @@ class WindowEnv(Env):
 
 
 if __name__ == '__main__':
-    env = WindowEnv(length=60, window_size=10, episode_length=50, init_offset=10, init_random_range=0)
+    env = WindowEnv(length=60, window=(20, 30), start=(15, 19), episode_length=50)
     learner = QLearning(env, lr=.1, gamma=0.9, eps=4e-2)
     n_episodes = 3000
 
