@@ -53,7 +53,7 @@ if __name__ == '__main__':
     episode_reward = 0
     rewards = []
     while True:
-        state_, reward_, done_ = learner.predict(state_)
+        state_, reward_, _, done_ = learner.predict(state_)
         if done_:
             env.reset()
             state_ = env.state

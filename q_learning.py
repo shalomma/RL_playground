@@ -24,4 +24,4 @@ class QLearning:
         new_value = (1 - self.lr) * old_value + self.lr * (reward + self.gamma * next_max)
         self.q_table[state, action] = new_value
 
-        return next_state, reward, done
+        return next_state, reward, action, done
