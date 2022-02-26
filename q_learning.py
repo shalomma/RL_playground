@@ -12,7 +12,12 @@ class QLearning:
         # self.q_table = np.random.rand(env.state_space.n, env.action_space.n)
 
     def get_action(self, state):
-        return np.argmax(self.q_table[state]) if random.uniform(0, 1) > self.eps else self.env.action_space.sample()
+        return self.argmax_random_tie_breaking(self.q_table[state]) \
+            if random.uniform(0, 1) > self.eps else self.env.action_space.sample()
+
+    @staticmethod
+    def argmax_random_tie_breaking(a):
+        return np.random.choice(np.flatnonzero(a == a.max()))
 
     def predict(self, state):
         action = self.get_action(state)
