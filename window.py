@@ -28,7 +28,10 @@ class WindowEnv(Env):
         return self.state, reward, done, {}
 
     def get_reward(self):
-        return 0 if self.window[0] <= self.state <= self.window[1] else -1
+        if self.state == self.window[1]:
+            return 0.1
+        else:
+            return 0 if self.window[0] <= self.state <= self.window[1] else -1
 
     def is_done(self):
         self.counter += 1
@@ -43,12 +46,13 @@ class WindowEnv(Env):
 
 
 if __name__ == '__main__':
-    env = WindowEnv(length=60, window=(20, 40), start=(0, 1), episode_length=50)
-    learner = QLearning(env, lr=.1, gamma=0.9, eps=1e-1)
-    n_episodes = 3000
+    env = WindowEnv(length=50, window=(20, 30), start=(10, 19), episode_length=50)
+    learner = QLearning(env, lr=.1, gamma=0.9, eps=2e-1)
+    n_episodes = 4000
 
     state_ = env.state
     mean_episode_state_history = []
+    std_episode_state_history = []
     episode_state_history = []
     episode_reward = 0
     rewards = []
@@ -57,7 +61,8 @@ if __name__ == '__main__':
         if done_:
             env.reset()
             state_ = env.state
-            mean_episode_state_history.append(np.array(episode_state_history).mean())
+            mean_episode_state_history.append(np.mean(np.array(episode_state_history)))
+            std_episode_state_history.append(np.std(np.array(episode_state_history)))
             episode_state_history = []
             rewards.append(episode_reward)
             episode_reward = 0
@@ -70,6 +75,9 @@ if __name__ == '__main__':
     plt.figure(figsize=(15, 6))
     plt.plot(mean_episode_state_history, label='avg_state')
     plt.plot(rewards, label='total_reward')
+    plt.plot(std_episode_state_history, label='std_state')
     plt.xlabel('episode')
+    plt.ylim([-env.episode_length, env.length])
+    plt.yticks(np.arange(-env.episode_length, env.length + 1, 5))
     plt.legend()
     plt.show()
