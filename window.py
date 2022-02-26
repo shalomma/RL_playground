@@ -43,8 +43,8 @@ class WindowEnv(Env):
 
 
 if __name__ == '__main__':
-    env = WindowEnv(length=60, window=(20, 30), start=(15, 19), episode_length=50)
-    learner = QLearning(env, lr=.1, gamma=0.9, eps=4e-2)
+    env = WindowEnv(length=60, window=(20, 40), start=(0, 1), episode_length=50)
+    learner = QLearning(env, lr=.1, gamma=0.9, eps=1e-1)
     n_episodes = 3000
 
     state_ = env.state
@@ -67,8 +67,9 @@ if __name__ == '__main__':
         episode_reward += reward_
         episode_state_history.append(state_)
 
-    plt.figure(figsize=(20, 8))
-    plt.plot(mean_episode_state_history)
-    # plt.show()
-    plt.plot(rewards)
+    plt.figure(figsize=(15, 6))
+    plt.plot(mean_episode_state_history, label='avg_state')
+    plt.plot(rewards, label='total_reward')
+    plt.xlabel('episode')
+    plt.legend()
     plt.show()
