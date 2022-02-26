@@ -34,7 +34,7 @@ class MaxBiasEnv(Env):
 
 
 if __name__ == '__main__':
-    env = MaxBiasEnv(mean=-0.0001, var=1.0)
+    env = MaxBiasEnv(mean=-0.1, var=1.0)
 
     n_epochs = 1000
     action_epochs_history = []
@@ -56,4 +56,5 @@ if __name__ == '__main__':
     plt.plot(np.array(action_epochs_history).mean(axis=0))
     plt.xlabel('episode')
     plt.ylabel('% left actions')
+    plt.yticks(np.arange(0, 1, 0.05))
     plt.show()

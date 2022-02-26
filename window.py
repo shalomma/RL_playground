@@ -77,7 +77,6 @@ if __name__ == '__main__':
     plt.plot(rewards, label='total_reward')
     plt.plot(std_episode_state_history, label='std_state')
     plt.xlabel('episode')
-    plt.ylim([-env.episode_length, env.length])
     plt.yticks(np.arange(-env.episode_length, env.length + 1, 5))
     plt.legend()
     plt.show()
