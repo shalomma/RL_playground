@@ -6,7 +6,9 @@ import matplotlib.pyplot as plt
 
 
 class MaxBiasEnv(Env):
-    def __init__(self):
+    def __init__(self, mean, var):
+        self.mean = mean
+        self.var = var
         self.state_space = Discrete(2)
         self.action_space = Discrete(2)
         self.state = 0
@@ -20,7 +22,7 @@ class MaxBiasEnv(Env):
             reward = 0
             done = False
         else:  # state == 1
-            reward = np.random.normal(loc=-0.1, scale=1.0)
+            reward = np.random.normal(loc=self.mean, scale=self.var)
             done = True
         return self.state, reward, done, {}
 
@@ -32,13 +34,13 @@ class MaxBiasEnv(Env):
 
 
 if __name__ == '__main__':
-    env = MaxBiasEnv()
+    env = MaxBiasEnv(mean=-0.0001, var=1.0)
 
     n_epochs = 1000
     action_epochs_history = []
     for _ in range(n_epochs):
         learner = QLearning(env, lr=0.1, gamma=1, eps=0.1)
-        n_episodes = 500
+        n_episodes = 350
         state_ = env.state
         action_history = []
         while n_episodes > 0:
@@ -52,4 +54,6 @@ if __name__ == '__main__':
 
     plt.figure(figsize=(12, 8))
     plt.plot(np.array(action_epochs_history).mean(axis=0))
+    plt.xlabel('episode')
+    plt.ylabel('% left actions')
     plt.show()
