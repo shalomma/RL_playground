@@ -29,8 +29,7 @@ class LineEnv(Env):
 
 
 if __name__ == '__main__':
-    n_states = 20
-    env = LineEnv(n=n_states)
+    env = LineEnv(n=20)
     learner = QLearning(env, lr=None, gamma=1, eps=0)
     learner.q_table[-2][0] = 1  # boundary condition as in the paper
     eps = 1e-2
@@ -43,4 +42,4 @@ if __name__ == '__main__':
             env.reset()
             state_ = env.state
             n_episodes += 1
-    n_steps = n_states * n_episodes
+    n_steps = env.n * n_episodes
