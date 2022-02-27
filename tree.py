@@ -29,7 +29,7 @@ class TreeEnv(Env):
             else:
                 raise Exception('unknown state in depth 1')
 
-        reward = 0 if self.state != 6 else np.random.normal(loc=self.mean, scale=self.variance)
+        reward = 0 if self.state == 6 else np.random.normal(loc=self.mean, scale=self.variance)
         return self.state, reward, done, {}
 
     def reset(self):
@@ -43,24 +43,26 @@ class TreeEnv(Env):
 if __name__ == '__main__':
     env = TreeEnv(mean=-0.1, variance=1.0)
 
-    n_epochs = 1000
+    n_epochs = 200
+    n_episodes = 3000
     action_epochs_history = []
     for _ in range(n_epochs):
         learner = QLearning(env, lr=0.1, gamma=1, eps=0.1)
-        n_episodes = 1000
+        episode = 1
         state_ = env.state
         max_reward_visits = []
-        while n_episodes > 0:
+        while n_episodes > episode:
             state_, reward_, action_, done_ = learner.predict(state_)
             if done_:
                 max_reward_visits += [1] if state_ == 6 else [0]
                 env.reset()
                 state_ = env.state
-                n_episodes -= 1
+                episode += 1
         action_epochs_history.append(max_reward_visits)
 
     plt.figure(figsize=(12, 8))
     plt.plot(np.array(action_epochs_history).mean(axis=0))
     plt.xlabel('episode')
     plt.ylabel('% getting to state 6')
+    plt.yticks(np.arange(0, 1.01, 0.05))
     plt.show()
