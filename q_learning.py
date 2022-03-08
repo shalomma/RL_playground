@@ -8,7 +8,9 @@ class QLearning:
         self.eps = eps
         self.lr = lr
         self.gamma = gamma
-        self.q_table = np.zeros((env.state_space.n, env.action_space.n))
+        self.n_state_space = env.state_space.n
+        self.n_action_space = env.action_space.n
+        self.q_table = self.reset()
         # self.q_table = np.random.rand(env.state_space.n, env.action_space.n)
 
     def get_action(self, state):
@@ -30,3 +32,7 @@ class QLearning:
         self.q_table[state, action] = new_value
 
         return next_state, reward, action, done
+
+    def reset(self):
+        self.q_table = np.zeros((self.n_state_space, self.n_action_space))
+        return self.q_table
