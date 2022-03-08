@@ -14,12 +14,12 @@ class MaxBiasEnv(Env):
         self.state = 0
 
     def step(self, action):
-        if self.state == 0 and action == 0:
-            reward = 0
+        if self.state == 0 and action == 0:  # right
+            reward = 0.
             done = True
-        elif self.state == 0 and action == 1:
+        elif self.state == 0 and action == 1:  # left
             self.state = 1
-            reward = 0
+            reward = 0.
             done = False
         else:  # state == 1
             reward = np.random.normal(loc=self.mean, scale=self.var)
@@ -34,22 +34,32 @@ class MaxBiasEnv(Env):
 
 
 if __name__ == '__main__':
-    env = MaxBiasEnv(mean=-0.1, var=1.0)
+    experiments = {
+        '-0.1': -0.1,
+        '0.': 0.,
+        '0.1': 0.1,
+        '0.2': 0.2,
+        '0.3': 0.3,
+        '0.4': 0.4,
+    }
 
-    n_epochs = 1000
+    env = MaxBiasEnv(mean=-0.1, var=1.0)
+    learner = QLearning(env, lr=0.1, gamma=1., eps=0.)
+
+    n_epochs = 100
+    n_episodes = 350
     action_epochs_history = []
     for _ in range(n_epochs):
-        learner = QLearning(env, lr=0.1, gamma=1, eps=0.1)
-        n_episodes = 350
         state_ = env.state
         action_history = []
-        while n_episodes > 0:
-            state_, reward_, action_, done_ = learner.predict(state_)
-            if done_:
-                action_history.append(state_)
-                env.reset()
-                state_ = env.state
-                n_episodes -= 1
+        for i in range(1, n_episodes):
+            done_ = False
+            while not done_:
+                state_, reward_, action_, done_ = learner.predict(state_)
+            action_history.append(state_)
+            env.reset()
+            state_ = env.state
+        learner.reset()
         action_epochs_history.append(action_history)
 
     plt.figure(figsize=(12, 8))
